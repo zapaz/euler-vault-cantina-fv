@@ -1,18 +1,20 @@
-import "../Vault.spec";
+import "../VaultFull.spec";
 import "./deposit.spec";
 import "./withdraw.spec";
+import "./zeroAddress.spec";
 import "./evc.spec";
-// import "./ko.spec";
+import "./depositWithdraw.spec";
 
-use rule onlyEVC;
+// use rule deposit;
+// use rule depositSatisfyDecrease;
+// use rule depositSatisfyIncrease;
 
-use rule deposit;
-use rule depositSatisfyDecrease;
-use rule depositSatisfyIncrease;
+// use rule withdraw;
+// use rule withdrawSatisfyIncrease;
+// use rule withdrawSatisfyDecrease;
 
-use rule withdraw;
-use rule withdrawSatisfyIncrease;
-use rule withdrawSatisfyDecrease;
+// use rule onlyEVC;
 
 // use rule depositWithdraw;
 
+use rule zeroAddressUnchanged;

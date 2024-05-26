@@ -7,7 +7,8 @@
 // - only actualCaller can decrease it's balance, by deposited amount
 ///////////////////////////////////////////////////////////////////////////////////////////////
 rule deposit(env e, uint256 amount, address receiver, address user){
-  mathint deposit = (amount == max_uint256) ? userAssets(e, actualCaller(e)) : amount;
+  address caller = actualCaller(e);
+  mathint deposit = (amount == max_uint256) ? userAssets(e, caller) : amount;
 
   mathint _balance = userAssets(e, user);
   deposit(e, amount, receiver);
@@ -15,13 +16,15 @@ rule deposit(env e, uint256 amount, address receiver, address user){
 
   assert e.msg.sender == evc;
   assert balance_ > _balance => (user == currentContract) && (balance_ == _balance + deposit);
-  assert balance_ < _balance => (user == actualCaller(e)) && (balance_ == _balance - deposit);
+  assert balance_ < _balance => (user == caller) && (balance_ == _balance - deposit);
 }
 
 rule depositSatisfyDecrease(env e, calldataarg args){
-  mathint _balance = userAssets(e, actualCaller(e));
+  address caller = actualCaller(e);
+
+  mathint _balance = userAssets(e, caller);
   deposit(e, args);
-  mathint balance_ = userAssets(e, actualCaller(e));
+  mathint balance_ = userAssets(e, caller);
 
   satisfy balance_ < _balance;
 }

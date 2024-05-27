@@ -6,34 +6,63 @@
 // - only Vault can increase it's balance, by deposited amount
 // - only actualCaller can decrease it's balance, by deposited amount
 ///////////////////////////////////////////////////////////////////////////////////////////////
-rule deposit(env e, uint256 amount, address receiver, address user){
+rule depositBalances(env e, uint256 amount, address receiver, address user){
   address caller = actualCaller(e);
+
   mathint deposit = (amount == max_uint256) ? userAssets(e, caller) : amount;
 
-  mathint _balance = userAssets(e, user);
+  mathint _balanceUser = userAssets(e, user);
   deposit(e, amount, receiver);
-  mathint balance_ = userAssets(e, user);
+  mathint balanceUser_ = userAssets(e, user);
 
   assert e.msg.sender == evc;
-  assert balance_ > _balance => (user == currentContract) && (balance_ == _balance + deposit);
-  assert balance_ < _balance => (user == caller) && (balance_ == _balance - deposit);
+  assert balanceUser_ > _balanceUser => (user == currentContract) && (balanceUser_ == _balanceUser + deposit);
+  assert balanceUser_ < _balanceUser => (user == caller)          && (balanceUser_ == _balanceUser - deposit);
+}
+
+rule depositShares(env e, uint256 amount, address receiver, address user){
+  address caller = actualCaller(e);
+
+  mathint _balanceCaller = userAssets(e, caller);
+  uint256 shares = deposit(e, amount, receiver);
+  mathint balanceCaller_ = userAssets(e, caller);
+
+  if (caller == currentContract) {
+    assert balanceCaller_ == _balanceCaller;
+  } else {
+    assert shares > 0 <=> balanceCaller_ < _balanceCaller;
+  }
+}
+
+// bug ??  caller == currentContract et shares > 0
+rule depositSharesByVault(env e, uint256 amount, address receiver, address user){
+  address caller = actualCaller(e);
+  require caller == currentContract;
+
+  mathint _balanceCaller = userAssets(e, caller);
+  uint256 shares = deposit(e, amount, receiver);
+  mathint balanceCaller_ = userAssets(e, caller);
+
+  satisfy shares > 0 && balanceCaller_ == _balanceCaller;
 }
 
 rule depositSatisfyDecrease(env e, calldataarg args){
   address caller = actualCaller(e);
 
-  mathint _balance = userAssets(e, caller);
-  deposit(e, args);
-  mathint balance_ = userAssets(e, caller);
+  mathint _balanceCaller = userAssets(e, caller);
+  uint256 shares = deposit(e, args);
+  mathint balanceCaller_ = userAssets(e, caller);
 
-  satisfy balance_ < _balance;
+  satisfy balanceCaller_ < _balanceCaller;
+  satisfy shares > 0;
 }
 
 rule depositSatisfyIncrease(env e, calldataarg args){
-  mathint _balance = userAssets(e, currentContract);
-  deposit(e, args);
-  mathint balance_ = userAssets(e, currentContract);
+  mathint _balanceVault = userAssets(e, currentContract);
+  uint256 shares = deposit(e, args);
+  mathint balanceVault_ = userAssets(e, currentContract);
 
-  satisfy balance_ > _balance;
+  satisfy balanceVault_ > _balanceVault;
+  satisfy shares > 0;
 }
 

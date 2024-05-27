@@ -9,9 +9,6 @@ import "../../../src/EVault/modules/Token.sol";
 contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
     constructor(Integrations memory integrations) Base(integrations) {}
 
-    // Linked against DummyERC20A in verification config
-    IERC20 underlying_asset;
-
     function userAssets(address user) public view returns (uint256) { // harnessed
         // The assets in the underlying asset contract (not in the vault)
         return IERC20(asset()).balanceOf(user);

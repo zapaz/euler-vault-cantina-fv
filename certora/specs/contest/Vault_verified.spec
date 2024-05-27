@@ -1,12 +1,15 @@
 import "../VaultFull.spec";
 
-import "./evc.spec";
-import "./deposit.spec";
-import "./withdraw.spec";
-import "./depositWithdraw.spec";
-import "./skim.spec";
-import "./zeroAddress.spec";
-import "./assetsShares.spec";
+import "./access/evc.spec";
+
+import "./unit/deposit.spec";
+import "./unit/withdraw.spec";
+import "./unit/skim.spec";
+
+import "./compose/depositWithdraw.spec";
+import "./compose/assetsShares.spec";
+import "./invariant/zeroAddress.spec";
+import "./invariant/vault.spec";
 
 use rule dustFavorsTheHouse;
 use rule underlyingCannotChange;
@@ -43,9 +46,4 @@ use rule skimIdemDeposit;
 
 use rule zeroAddressUnchanged;
 
-// DEV
-
-// KO
-// use rule assetsSharesAssets;
-// use rule skimRedeemUnchanged;
-// use rule skimIdemDeposit2;
+use rule vaultBalanceChanged;

@@ -1,4 +1,5 @@
 pragma solidity ^0.8.0;
+
 import "../../../src/EVault/modules/Borrowing.sol";
 import "../../../src/EVault/shared/types/UserStorage.sol";
 import "../../../src/EVault/shared/types/Types.sol";
@@ -11,7 +12,7 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
     constructor(Integrations memory integrations) Borrowing(integrations) {}
 
     function initOperationExternal(uint32 operation, address accountToCheck)
-        public 
+        public
         returns (VaultCache memory vaultCache, address account)
     {
         return initOperation(operation, accountToCheck);
@@ -21,7 +22,7 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
         return vaultStorage.totalShares;
     }
 
-    function toAssetsExt(uint256 amount) external pure returns (uint256){
+    function toAssetsExt(uint256 amount) external pure returns (uint256) {
         return TypesLib.toAssets(amount).toUint();
     }
 
@@ -38,9 +39,12 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
         return vaultCache.interestAccumulator;
     }
 
-     function getUnderlyingAssetExt() external returns (IERC20) {
+    function getUnderlyingAssetExt() public returns (IERC20) {
         VaultCache memory vaultCache = updateVault();
         return vaultCache.asset;
     }
 
+    function userAssets(address user) public  returns (uint256) {
+        return IERC20(getUnderlyingAssetExt()).balanceOf(user);
+    }
 }

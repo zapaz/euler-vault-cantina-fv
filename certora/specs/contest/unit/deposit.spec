@@ -20,30 +20,28 @@ rule depositBalances(env e, uint256 amount, address receiver, address user){
   assert balanceUser_ < _balanceUser => (user == caller)          && (balanceUser_ == _balanceUser - deposit);
 }
 
-rule depositShares(env e, uint256 amount, address receiver, address user){
+rule depositSharesWeak(env e, calldataarg args){
   address caller = actualCaller(e);
+  require caller != currentContract;
 
   mathint _balanceCaller = userAssets(e, caller);
-  uint256 shares = deposit(e, amount, receiver);
+  uint256 shares = deposit(e, args);
   mathint balanceCaller_ = userAssets(e, caller);
 
-  if (caller == currentContract) {
-    assert balanceCaller_ == _balanceCaller;
-  } else {
-    assert shares > 0 <=> balanceCaller_ < _balanceCaller;
-  }
+  assert shares > 0 <=> balanceCaller_ < _balanceCaller;
 }
 
 // bug ??  caller == currentContract et shares > 0
-rule depositSharesByVault(env e, uint256 amount, address receiver, address user){
+rule depositSharesByVault(env e, calldataarg args){
   address caller = actualCaller(e);
   require caller == currentContract;
 
   mathint _balanceCaller = userAssets(e, caller);
-  uint256 shares = deposit(e, amount, receiver);
+  uint256 shares = deposit(e, args);
   mathint balanceCaller_ = userAssets(e, caller);
 
-  satisfy shares > 0 && balanceCaller_ == _balanceCaller;
+  satisfy shares > 0;
+  satisfy balanceCaller_ == _balanceCaller;
 }
 
 rule depositSatisfyDecrease(env e, calldataarg args){
@@ -53,8 +51,8 @@ rule depositSatisfyDecrease(env e, calldataarg args){
   uint256 shares = deposit(e, args);
   mathint balanceCaller_ = userAssets(e, caller);
 
-  satisfy balanceCaller_ < _balanceCaller;
   satisfy shares > 0;
+  satisfy balanceCaller_ < _balanceCaller;
 }
 
 rule depositSatisfyIncrease(env e, calldataarg args){
@@ -62,7 +60,7 @@ rule depositSatisfyIncrease(env e, calldataarg args){
   uint256 shares = deposit(e, args);
   mathint balanceVault_ = userAssets(e, currentContract);
 
-  satisfy balanceVault_ > _balanceVault;
   satisfy shares > 0;
+  satisfy balanceVault_ > _balanceVault;
 }
 

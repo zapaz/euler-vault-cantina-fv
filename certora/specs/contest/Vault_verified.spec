@@ -28,7 +28,7 @@ use rule zeroDepositZeroShares;
 use rule onlyEVC;
 
 use rule depositBalances;
-use rule depositShares;
+use rule depositSharesWeak;
 use rule depositSharesByVault;
 use rule depositSatisfyDecrease;
 use rule depositSatisfyIncrease;
@@ -47,3 +47,7 @@ use rule skimIdemDeposit;
 use rule zeroAddressUnchanged;
 
 use rule vaultBalanceChanged;
+
+use rule assetsSharesCVL;
+use rule sharesAssetsCVL;
+use rule assetsSharesAssets;

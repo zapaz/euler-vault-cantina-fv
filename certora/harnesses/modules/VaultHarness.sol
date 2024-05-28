@@ -16,6 +16,10 @@ contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
         // return vaultStorage.users[user].getBalance().toAssetsDown(loadVault()).toUint();
     }
 
+    function cash() public view returns (uint256) {
+        return vaultStorage.cash.toUint();
+    }
+
     function updateVault() internal override returns (VaultCache memory vaultCache) {
         // initVaultCache is difficult to summarize because we can't
         // reason about the pass-by-value VaultCache at the start and
@@ -41,9 +45,6 @@ contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
     }
     function storage_cash() public view returns (Assets) {
         return vaultStorage.cash;
-    }
-    function cash() public view returns (uint256) {
-        return vaultStorage.cash.toUint();
     }
     function storage_supplyCap() public view returns (uint256) {
         return vaultStorage.supplyCap.resolve();

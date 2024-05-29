@@ -1,6 +1,4 @@
-import "../VaultFull.spec";
-
-import "./unit/deposit.spec";
+import "../Base.spec";
 
 // rule fails when caller is Vault (caller == currentContract)
 // forge test POC available => `depositSelf.t.sol`

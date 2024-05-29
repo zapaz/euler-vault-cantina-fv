@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.0;
 
-import {EVaultTestBase} from "../../EVaultTestBase.t.sol";
+import {EVaultTestBase} from "../unit/evault/EVaultTestBase.t.sol";
 import {console2} from "forge-std/Test.sol";
 
 contract VaultTest_DepositSelf2 is EVaultTestBase {
@@ -9,14 +9,14 @@ contract VaultTest_DepositSelf2 is EVaultTestBase {
     uint256 two = 2 * one;
     address user = makeAddr("user");
     address user2 = makeAddr("user2");
-    address robber = makeAddr("robber");
+    address hacker = makeAddr("hacker");
 
     function _log(string memory label) public view {
         console2.log(label, "| User   Balance :", assetTST.balanceOf(user));
         console2.log(label, "| User2  Balance :", assetTST.balanceOf(user2));
         console2.log(label, "| Vault  Balance :", assetTST.balanceOf(address(eTST)));
         console2.log(label, "| Total  Assets  :", eTST.totalAssets());
-        console2.log(label, "| Robber Balance :", assetTST.balanceOf(robber));
+        console2.log(label, "| Hacker Balance :", assetTST.balanceOf(hacker));
         console2.log("------------------------|-------------------------------------");
     }
 
@@ -30,7 +30,7 @@ contract VaultTest_DepositSelf2 is EVaultTestBase {
         assert(assetTST.balanceOf(address(eTST)) == 0);
         assert(assetTST.balanceOf(user) == one);
         assert(assetTST.balanceOf(user2) == two);
-        assert(assetTST.balanceOf(robber) == 0);
+        assert(assetTST.balanceOf(hacker) == 0);
 
         startHoax(user);
         assetTST.approve(address(eTST), one);
@@ -46,12 +46,12 @@ contract VaultTest_DepositSelf2 is EVaultTestBase {
         eTST.deposit(one + two, address(eTST));
         _log("Buggy  Vault  Deposit 3");
 
-        eTST.withdraw(one + two, robber, address(eTST));
-        _log("Robber Vault  Steal   3");
+        eTST.withdraw(one + two, hacker, address(eTST));
+        _log("Hacker Vault  Steal   3");
 
         assert(assetTST.balanceOf(address(eTST)) == 0);
         assert(assetTST.balanceOf(user) == 0);
         assert(assetTST.balanceOf(user2) == 0);
-        assert(assetTST.balanceOf(robber) == one + two);
+        assert(assetTST.balanceOf(hacker) == one + two);
     }
 }

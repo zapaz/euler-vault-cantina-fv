@@ -11,6 +11,9 @@ import "./compose/assetsShares.spec";
 import "./invariant/zeroAddress.spec";
 import "./invariant/vault.spec";
 
+import "./common/definitions.spec";
+import "./common/reverts.spec";
+
 use rule dustFavorsTheHouse;
 use rule underlyingCannotChange;
 use rule redeemingAllValidity;
@@ -26,12 +29,10 @@ use rule convertToSharesWeakAdditivity;
 use rule zeroDepositZeroShares;
 
 use rule onlyEVC;
-
-use rule depositBalances;
+use rule deposit;
 use rule depositSharesWeak;
 use rule depositSharesByVault;
-use rule depositSatisfyDecrease;
-use rule depositSatisfyIncrease;
+use rule depositSatisfy;
 
 use rule withdraw;
 use rule withdrawSatisfyIncrease;
@@ -51,3 +52,5 @@ use rule vaultBalanceChanged;
 use rule assetsSharesCVL;
 use rule sharesAssetsCVL;
 use rule assetsSharesAssets;
+
+use rule mustNotAlwaysReverts;

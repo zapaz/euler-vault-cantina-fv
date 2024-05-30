@@ -1,4 +1,6 @@
-rule vaultBalanceChanged (method f, env e, calldataarg args, address user)  filtered { f -> !f.isView }  {
+rule vaultBalanceChanged (method f, env e, calldataarg args, address user)  filtered {
+  f -> !(f.isView || isHarness(f))
+}{
   mathint _balanceUser = userAssets(e, user);
   f(e, args);
   mathint balanceUser_ = userAssets(e, user);
@@ -10,11 +12,10 @@ rule vaultBalanceChanged (method f, env e, calldataarg args, address user)  filt
     || f.selector == sig:redeem(uint256,address,address).selector;
 }
 
-
 // without Borrowing no need to take into account totalBorrowed
 // with Borrowing would need to take into account totalBorrowed
 rule vaultBalanceGreaterThanTotalAssets(method f, env e, calldataarg args) filtered {
-  f -> !f.isView || f.selector == sig:skim(uint256,address).selector
+  f -> !(f.isView || isHarness(f) || f.selector == sig:skim(uint256,address).selector)
 }{
   address caller = actualCaller(e);
   require caller != currentContract;

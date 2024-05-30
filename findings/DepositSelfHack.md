@@ -1,4 +1,4 @@
-EVK Vault module can deposit to itself allowing to drain all the Assets
+# EVK Vault module can Deposit to itself allowing to Drain all Assets
 
 ## Relevant Context
 A seemingly harmless SimpleVault inheriting from the EVK can drain all the Assets of the Vault.
@@ -47,7 +47,7 @@ contract SimpleVault is ISimpleVaultBase, EVault {
 ```
 </details>
 
-The hack here is to call `this.deposit` and `this.withdraw` instead of `deposit` and `withdraw` to enable the Vault to be the actual caller. So depositing into itself, implying it's own balance unchanged (due to a tranfer of Assets to itsef, sort of `tranfer(from, to)` with `to == from`)
+The hack here is to call `this.deposit` and `this.withdraw` instead of `deposit` and `withdraw` to enable the Vault to be the actual caller. So depositing into itself, implying it's own balance unchanged (due to a trasfer of Assets to itsef, sort of `transfer(from, to)` with `to == from`)
 
 So anyone can call `stake` with `totalAssets()` amount, and then call `unstake` with the same amount, draining all the Assets of the Vault in 2 transactions.
 
@@ -65,7 +65,7 @@ The likelihood is high, as the code is public and the exploit is easy to underst
 
 The only hurdle is to promote this malicious Vault, without audits (saying "it's only 2 lines of code added..."), to attract users and encourange them to deposit funds in it.
 
-Impact is that all sort of Vault like `SimpleVault` derivated from the EVK can drain all the assets in 2 transactions.
+Impact is that all sort of Vault like `SimpleVault` derivated from the EVK can drain all the Assets in 2 transactions.
 
 
 ## Proof of Concept

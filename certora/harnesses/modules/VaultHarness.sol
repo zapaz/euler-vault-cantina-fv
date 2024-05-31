@@ -58,6 +58,10 @@ contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
         return vaultStorage.borrowCap.resolve();
     }
 
+    function storage_hookTarget() external view returns (address) {
+        return vaultStorage.hookTarget;
+    }
+
     function storage_reentrancyLocked() external view returns (bool) {
         return vaultStorage.reentrancyLocked;
     }

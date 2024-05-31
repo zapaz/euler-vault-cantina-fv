@@ -14,6 +14,12 @@ import "./invariant/vault.spec";
 import "./common/definitions.spec";
 import "./common/reverts.spec";
 
+methods {
+    function storage_reentrancyLocked() external returns (bool)    envfree;
+    function storage_hookTarget()       external returns (address) envfree;
+}
+
+
 use rule dustFavorsTheHouse;
 use rule underlyingCannotChange;
 use rule redeemingAllValidity;
@@ -54,3 +60,7 @@ use rule sharesAssetsCVL;
 use rule assetsSharesAssets;
 
 use rule mustNotAlwaysReverts;
+
+use invariant reentrantLockInvariant;
+use rule nonReentrantCheck;
+use rule nonReentrantViewCheck;

@@ -14,11 +14,12 @@ import "./invariant/vault.spec";
 
 import "./common/reverts.spec";
 import "./common/definitions.spec";
+import "./common/nonReentrant.spec";
 
-use rule deposit;
-use rule depositSharesWeak;
-use rule depositSharesByVault;
-use rule depositSatisfy;
+methods {
+    function storage_reentrancyLocked() external returns (bool)    envfree;
+    function storage_hookTarget()       external returns (address) envfree;
+}
 
 // use rule vaultBalanceGreaterThanTotalAssets;
 // use rule depositSharesByVault;

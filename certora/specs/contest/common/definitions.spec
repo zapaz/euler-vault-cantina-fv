@@ -32,3 +32,26 @@ definition isHarnessVault(method f) returns bool =
       ||  f.selector == sig:cache_cash().selector;
 
 definition isHarness(method f) returns bool = isHarnessBase(f) || isHarnessVault(f);
+
+definition isNonReentrant(method f) returns bool =
+          f.selector == sig:deposit(uint256,address).selector
+      ||  f.selector == sig:mint(uint256,address).selector
+      ||  f.selector == sig:withdraw(uint256,address,address).selector
+      ||  f.selector == sig:redeem(uint256,address,address).selector
+      ||  f.selector == sig:skim(uint256,address).selector;
+
+
+definition isNonReentrantView(method f) returns bool =
+          f.selector == sig:totalAssets().selector
+      ||  f.selector == sig:convertToAssets(uint256).selector
+      ||  f.selector == sig:convertToShares(uint256).selector
+      ||  f.selector == sig:maxDeposit(address).selector
+      ||  f.selector == sig:previewDeposit(uint256).selector
+      ||  f.selector == sig:maxMint(address).selector
+      ||  f.selector == sig:previewMint(uint256).selector
+      ||  f.selector == sig:maxWithdraw(address).selector
+      ||  f.selector == sig:previewWithdraw(uint256).selector
+      ||  f.selector == sig:maxRedeem(address).selector
+      ||  f.selector == sig:previewRedeem(uint256).selector
+      ||  f.selector == sig:accumulatedFees().selector
+      ||  f.selector == sig:accumulatedFeesAssets().selector;

@@ -1,5 +1,5 @@
 rule borrowingBalanceChanged (method f, env e, calldataarg args, address user) filtered {
-  f -> !(f.isView || isHarness(f))
+  f -> !(f.isView)
 }{
   mathint _balanceUser = userAssets(e, user);
   f(e, args);

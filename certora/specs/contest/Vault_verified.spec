@@ -13,6 +13,7 @@ import "./invariant/vault.spec";
 
 import "./common/definitions.spec";
 import "./common/reverts.spec";
+import "./common/nonReentrant.spec";
 
 methods {
     function storage_reentrancyLocked() external returns (bool)    envfree;

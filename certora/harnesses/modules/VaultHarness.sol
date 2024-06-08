@@ -11,11 +11,11 @@ contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
     constructor(Integrations memory integrations) Base(integrations) {}
 
     function userAssets(address user) public view returns (uint256) {
-        // harnessed
-        // The assets in the underlying asset contract (not in the vault)
         return IERC20(asset()).balanceOf(user);
-        // The assets stored in the vault for a user.
-        // return vaultStorage.users[user].getBalance().toAssetsDown(loadVault()).toUint();
+    }
+
+    function userShares(address user) public view returns (uint256) {
+        return vaultStorage.users[user].getBalance().toUint();
     }
 
     function cash() public view returns (uint256) {

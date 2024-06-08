@@ -5,6 +5,8 @@ import "./access/evc.spec";
 import "./unit/deposit.spec";
 import "./unit/withdraw.spec";
 import "./unit/skim.spec";
+import "./unit/mint.spec";
+import "./unit/redeem.spec";
 
 import "./compose/depositWithdraw.spec";
 import "./compose/assetsShares.spec";
@@ -22,7 +24,7 @@ methods {
 
 
 use rule dustFavorsTheHouse;
-use rule underlyingCannotChange;
+
 use rule redeemingAllValidity;
 use rule reclaimingProducesAssets;
 use invariant totalSupplyIsSumOfBalances;
@@ -37,30 +39,33 @@ use rule zeroDepositZeroShares;
 
 use rule onlyEVC;
 use rule deposit;
-use rule depositSharesWeak;
-use rule depositSharesByVault;
+use rule depositShares;
 use rule depositSatisfy;
+use rule depositWithdraw;
+use rule depositMonotonicity;
+
+use rule vaulAssetsChanged;
+use rule vaulSharesChanged;
+use rule vaultBalanceGreaterThanTotalAssets;
+
+use rule mintMaxEqual;
+use rule depositMax;
+use rule mintMax;
+use rule redeemMax;
+use rule withdrawMax;
 
 use rule withdraw;
-use rule withdrawSatisfyIncrease;
 use rule withdrawSatisfyDecrease;
 
-use rule depositWithdraw;
-
 use rule skim;
-use rule skimOk;
-use rule skimWithdrawUnchanged;
 use rule skimIdemDeposit;
+use rule skimSatisfy;
+use rule skimWithdrawUnchanged;
 
-use rule zeroAddressUnchanged;
-
-use rule vaultBalanceChanged;
 
 use rule assetsSharesCVL;
 use rule sharesAssetsCVL;
 use rule assetsSharesAssets;
-
-use rule mustNotAlwaysReverts;
 
 use invariant reentrantLockInvariant;
 use rule nonReentrantCheck;

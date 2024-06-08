@@ -1,3 +1,11 @@
+definition min(uint256 a, uint256 b) returns uint256 = a < b ? a : b;
+definition max(uint256 a, uint256 b) returns uint256 = a > b ? a : b;
+
+definition isTransfer(method f) returns bool =
+      f.selector == sig:transfer(address,uint256).selector
+  ||  f.selector == sig:transferFrom(address,address,uint256).selector
+  ||  f.selector == sig:transferFromMax(address,address).selector;
+
 definition isHarnessBase(method f) returns bool =
       f.selector == sig:getLTVConfig(address).selector
   ||  f.selector == sig:vaultCacheOracleConfigured().selector

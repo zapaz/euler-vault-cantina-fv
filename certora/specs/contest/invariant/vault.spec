@@ -1,19 +1,41 @@
-rule vaultBalanceChanged (method f, env e, calldataarg args, address user)  filtered {
+rule vaulAssetsChanged (method f, env e, calldataarg args, address user)  filtered {
   f -> !(f.isView || isHarness(f))
 }{
-  mathint _balanceUser = userAssets(e, user);
-  f(e, args);
-  mathint balanceUser_ = userAssets(e, user);
+  require user != currentContract;
 
-  assert balanceUser_ != _balanceUser =>
+  mathint _userAssets = userAssets(e, user);
+  f(e, args);
+  mathint userAssets_ = userAssets(e, user);
+
+  assert userAssets_ < _userAssets =>
+       f.selector == sig:deposit(uint256,address).selector
+    || f.selector == sig:mint(uint256,address).selector;
+
+  assert userAssets_ > _userAssets =>
+       f.selector == sig:withdraw(uint256,address,address).selector
+    || f.selector == sig:redeem(uint256,address,address).selector;
+}
+
+rule vaulSharesChanged (method f, env e, calldataarg args, address user)  filtered {
+  f -> !(f.isView || isHarness(f) || isTransfer(f))
+}{
+  require user != currentContract;
+
+  mathint _userShares = userShares(e, user);
+  f(e, args);
+  mathint userShares_ = userShares(e, user);
+
+  assert userShares_ > _userShares =>
        f.selector == sig:deposit(uint256,address).selector
     || f.selector == sig:mint(uint256,address).selector
-    || f.selector == sig:withdraw(uint256,address,address).selector
+    || f.selector == sig:skim(uint256,address).selector;
+
+  assert userShares_ < _userShares =>
+       f.selector == sig:withdraw(uint256,address,address).selector
     || f.selector == sig:redeem(uint256,address,address).selector;
 }
 
 // without Borrowing no need to take into account totalBorrowed
-// with Borrowing would need to take into account totalBorrowed
 rule vaultBalanceGreaterThanTotalAssets(method f, env e, calldataarg args) filtered {
   f -> !(f.isView || isHarness(f) || f.selector == sig:skim(uint256,address).selector)
 }{
@@ -27,12 +49,14 @@ rule vaultBalanceGreaterThanTotalAssets(method f, env e, calldataarg args) filte
   assert userAssets(e, currentContract) >= totalAssets(e);
 }
 
-rule vaultSkim(env e, uint256 amount, address receiver) {
-  address caller = actualCaller(e);
+// with no borrow
+rule vaultSkim(env e) {
+  require actualCaller(e) != currentContract;
+  require storage_totalBorrows(e) == 0;
 
   require userAssets(e, currentContract) >= totalAssets(e);
 
-  skim(e, amount, receiver);
+  skim(e, _, _);
 
   assert userAssets(e, currentContract) >= totalAssets(e);
 }

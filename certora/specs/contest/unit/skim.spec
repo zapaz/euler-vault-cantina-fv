@@ -1,64 +1,83 @@
-// OK
-
-rule skimOk(env e, uint256 amount, address user){
-  address caller = actualCaller(e);
-  require ERC20a == asset();
-
-  storage initialStorage = lastStorage;
-
-  ERC20a.transferFrom(e, caller, currentContract, amount);
-  uint256 _shares = skim(e, amount, caller);
-
-  uint256 shares_ = deposit(e, amount, caller) at initialStorage;
-
-  assert shares_ == _shares;
-}
-
 // skim should only take surplus
 // cash after skim must be strictly equal to cash before + amount transfered
-rule skim(env e, uint256 amount, address user){
+rule skim(env e, uint256 amount, address receiver){
   address caller = actualCaller(e);
   require caller != currentContract;
   require ERC20a == asset();
 
-  uint256 _cash = cash(e);
-  require _cash == userAssets(e, currentContract);
-
+  require cash(e) == userAssets(e, currentContract);
   ERC20a.transferFrom(e, caller, currentContract, amount);
-  skim(e, max_uint256, caller);
-  uint256 cash_ = cash(e);
+  mathint _shares = convertToShares(e, amount);
 
-  assert cash_ == require_uint256(_cash + amount);
+  mathint _cash = cash(e);
+
+  mathint _callerAssets = userAssets(e, caller);
+  mathint _vaultAssets = userAssets(e, currentContract);
+  mathint _receiverShares = userShares(e, receiver);
+
+  mathint shares = skim(e, amount, receiver);
+
+  mathint cash_ = cash(e);
+  mathint callerAssets_ = userAssets(e, caller);
+  mathint vaultAssets_ = userAssets(e, currentContract);
+  mathint receiverShares_ = userShares(e, receiver);
+
+  assert shares == _shares;
+  assert shares > 0 <=> amount > 0;
+  assert callerAssets_ == _callerAssets;
+  assert vaultAssets_ == _vaultAssets;
+  assert cash_ == _cash + amount;
+  assert receiverShares_ == _receiverShares + shares;
 }
 
 // skim and deposit should have same effect
 // shares via deposit should be equal to shares via skim
-rule skimIdemDeposit(env e, uint256 amount){
+// (no borrow here)
+rule skimIdemDeposit(env e, uint256 amount, address receiver){
   address caller = actualCaller(e);
   require caller != currentContract;
+
   require ERC20a == asset();
   require cash(e) == userAssets(e, currentContract);
 
   storage initialStorage = lastStorage;
 
   ERC20a.transferFrom(e, caller, currentContract, amount);
-  uint256 _shares = skim(e, max_uint256, caller);
+  mathint _shares = skim(e, max_uint256, receiver);
+  mathint _receiverShares = userShares(e, receiver);
 
-  uint256 shares_ = deposit(e, amount, caller) at initialStorage;
+  mathint shares_ = deposit(e, amount, receiver) at initialStorage;
+  mathint receiverShares_ = userShares(e, receiver);
 
   assert shares_ == _shares;
+  assert receiverShares_ == _receiverShares;
 }
 
+///
+// shares can be returned while
+// - actual caller balance decrease
+// - actual Vault balance increase
+///
+rule skimSatisfy(env e, address receiver){
+  address caller = actualCaller(e);
+
+  mathint _receiverShares = userShares(e, receiver);
+  mathint shares = skim(e, _, receiver);
+  mathint receiverShares_ = userShares(e, receiver);
+
+  satisfy shares > 0;
+  satisfy receiverShares_ > _receiverShares;
+}
 
 rule skimWithdrawUnchanged(env e, uint256 amount, address user){
   address caller = actualCaller(e);
   require ERC20a == asset();
 
-  uint256 _balance = userAssets(e, user);
+  mathint _balance = userAssets(e, user);
   ERC20a.transferFrom(e, caller, currentContract, amount);
   skim(e, max_uint256, caller);
   withdraw(e, amount, caller, caller);
-  uint256 balance_ = userAssets(e, user);
+  mathint balance_ = userAssets(e, user);
 
   assert balance_ == _balance;
 }
@@ -75,11 +94,11 @@ rule skimRedeemUnchanged(env e, uint256 amount, address user){
   require ERC20a == asset();
   require cash(e) == userAssets(e, currentContract);
 
-  uint256 _balance = userAssets(e, user);
+  mathint _balance = userAssets(e, user);
   ERC20a.transferFrom(e, caller, currentContract, amount);
   skim(e, max_uint256, caller);
   redeem(e, max_uint256, caller, caller);
-  uint256 balance_ = userAssets(e, user);
+  mathint balance_ = userAssets(e, user);
 
   assert balance_ == _balance;
 }

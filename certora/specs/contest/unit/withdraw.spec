@@ -26,4 +26,15 @@ rule withdrawSatisfyDecrease(env e, calldataarg args, address user){
   satisfy balance_ < _balance;
 }
 
+rule withdrawMax(env e, address owner){
+  require storage_totalBorrows(e) == 0;
 
+  uint256 maxAssets1 = convertToAssets(e, convertToShares(e, cash(e)));
+  uint256 maxAssets2 = convertToAssets(e, userShares(e, owner));
+
+  uint256 maxWithdraw = maxWithdraw(e, owner);
+
+  assert isWithdrawDisabled(e) => maxWithdraw == 0;
+  assert maxWithdraw <= maxAssets1;
+  assert maxWithdraw <= maxAssets2;
+}

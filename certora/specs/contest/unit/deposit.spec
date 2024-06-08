@@ -3,98 +3,106 @@
 ///
 
 ///
-// - deposited amount is equal to amount or actuallCaller balance (if amount is max_uint256)
-// - deposit must be called by evc
-// - deposit shares are equal to expected depositPreview value
-// - only Vault can increase it's balance, by deposited amount
-// - only actualCaller can decrease it's balance, by deposited amount
+// On deposit:
+// - only vault can increase it's assets balance, by deposited amount
+// - only actualCaller can decrease it's assets balance, by deposited amount
 ///
 rule deposit(env e, uint256 amount, address user){
   address caller = actualCaller(e);
 
   mathint deposit = (amount == max_uint256) ? userAssets(e, caller) : amount;
 
-  mathint _balanceUser = userAssets(e, user);
+  mathint _userAssets = userAssets(e, user);
   deposit(e, amount, _);
-  mathint balanceUser_ = userAssets(e, user);
+  mathint userAssets_ = userAssets(e, user);
 
-  assert e.msg.sender == evc;
-  assert balanceUser_ > _balanceUser => (user == currentContract) && (balanceUser_ == _balanceUser + deposit);
-  assert balanceUser_ < _balanceUser => (user == caller)          && (balanceUser_ == _balanceUser - deposit);
+  assert userAssets_ > _userAssets => (user == currentContract) && (userAssets_ == _userAssets + deposit);
+  assert userAssets_ < _userAssets => (user == caller)          && (userAssets_ == _userAssets - deposit);
+}
+
+rule depositMonotonicity(env e, uint256 amount, uint256 more){
+  storage initialStorage = lastStorage;
+  uint256 _shares = deposit(e, amount, _);
+
+  uint256 shares_ = deposit(e, require_uint256(amount + more), _) at initialStorage;
+
+  assert shares_ >= _shares;
+}
+
+
+///
+// Assuming actual caller is not the vault (caller != currentContract)
+// on deposit:
+// - shares returned are equal to previewDesposit result
+// - shares returned are equal to convertToShares of amount
+// - some shares are returned if and only if amount is strictly positive
+// - caller assets balance decrease by amount
+// - receiver shares balance increase by shares
+///
+rule depositShares(env e, uint256 amount, address receiver){
+  address caller = actualCaller(e);
+  require caller != currentContract;
+
+  mathint _callerAssets = userAssets(e, caller);
+  mathint _receiverShares = userShares(e, receiver);
+
+  mathint _shares = previewDeposit(e, amount);
+  mathint shares_ = convertToShares(e, amount);
+  mathint shares = deposit(e, amount, receiver);
+
+  mathint callerAssets_ = userAssets(e, caller);
+  mathint receiverShares_ = userShares(e, receiver);
+
+  assert shares == _shares;
+  assert shares == shares_;
+  assert shares > 0 <=> amount > 0;
+  assert callerAssets_ + amount == _callerAssets;
+  assert receiverShares_ == _receiverShares + shares;
 }
 
 ///
 // shares sould be returned if and only if caller balance decrease
 ///
-// rule fails: that's a bug!
-//  - fails when caller is Vault
+// rule fails: that is a weakness for a Kit
+//  - fails when caller is vault
 //  - POC available => `test/contest/DepositSelfHack.t.sol`
 //  - report => `findings/DepositSelfHack.md`
 ///
-rule depositShares(env e){
+rule depositSharesViolated(env e){
   address caller = actualCaller(e);
 
-  mathint _balanceCaller = userAssets(e, caller);
-  uint256 shares = deposit(e, _, _);
-  mathint balanceCaller_ = userAssets(e, caller);
+  mathint _callerAssets = userAssets(e, caller);
+  mathint shares = deposit(e, _, _);
+  mathint callerAssets_ = userAssets(e, caller);
 
-  assert shares > 0 <=> balanceCaller_ < _balanceCaller;
+  assert shares > 0 <=> callerAssets_ < _callerAssets;
+}
+
+rule depositMax(env e){
+  require storage_totalBorrows(e) == 0;
+
+  uint256 supply = cash(e);
+  uint256 supplyCap = storage_supplyCap();
+  uint256 maxAssets1 = require_uint256(supplyCap - supply);
+  uint256 maxAssets2 = assert_uint256(max_uint112 - supply);
+  uint256 maxAssets3 = convertToAssets(e, assert_uint256(max_uint112 - storage_totalShares(e)));
+
+  uint256 maxDeposit = maxDeposit(e, _);
+
+  assert isDepositDisabled(e) => maxDeposit == 0;
+  assert supply  >= supplyCap => maxDeposit == 0;
+  assert maxDeposit <= maxAssets1;
+  assert maxDeposit <= maxAssets2;
+  assert maxDeposit <= maxAssets3;
 }
 
 ///
-// weak version of `depositShares` rule
-// assuming actual caller is not the Vault (caller != currentContract)
-// shares are returned if and only if caller balance decrease
-///
-rule depositSharesWeak(env e, uint256 amount){
-  address caller = actualCaller(e);
-  require caller != currentContract;
-
-  mathint _balanceCaller = userAssets(e, caller);
-  uint256 _shares = previewDeposit(e, amount);
-  uint256 shares_ = convertToShares(e, amount);
-  uint256 shares = deposit(e, amount, _);
-  mathint balanceCaller_ = userAssets(e, caller);
-
-  assert shares == shares_;
-  assert shares == _shares;
-  assert balanceCaller_ + amount == _balanceCaller;
-  assert shares > 0 <=> balanceCaller_ < _balanceCaller;
-}
-
-///
-// another rule proving the bug
-// shares are returned whereas actual caller balance is unchanged
-///
-rule depositSharesByVault(env e){
-  address caller = actualCaller(e);
-  require caller == currentContract;
-
-  mathint _balanceCaller = userAssets(e, caller);
-  uint256 shares = deposit(e, _, _);
-  mathint balanceCaller_ = userAssets(e, caller);
-
-  satisfy shares > 0;
-  satisfy balanceCaller_ == _balanceCaller;
-}
-
-///
-// shares can be returned while
-// - actual caller balance decrease
-// - actual Vault balance increase
+// shares can be returned
 ///
 rule depositSatisfy(env e){
-  address caller = actualCaller(e);
-
-  mathint _balanceCaller = userAssets(e, caller);
-  mathint _balanceVault = userAssets(e, currentContract);
-  uint256 shares = deposit(e, _, _);
-  mathint balanceCaller_ = userAssets(e, caller);
-  mathint balanceVault_ = userAssets(e, currentContract);
+  mathint shares = deposit(e, _, _);
 
   satisfy shares > 0;
-  satisfy balanceCaller_ < _balanceCaller;
-  satisfy balanceVault_ > _balanceVault;
 }
 
 

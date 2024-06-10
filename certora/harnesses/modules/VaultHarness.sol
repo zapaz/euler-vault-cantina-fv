@@ -10,6 +10,10 @@ import "../../../src/EVault/modules/Token.sol";
 contract VaultHarness is VaultModule, TokenModule, AbstractBaseHarness {
     constructor(Integrations memory integrations) Base(integrations) {}
 
+    function controllerEnabled(address account) public view returns (bool) {
+        return hasAnyControllerEnabled(account);
+    }
+
     function userAssets(address user) public view returns (uint256) {
         return IERC20(asset()).balanceOf(user);
     }

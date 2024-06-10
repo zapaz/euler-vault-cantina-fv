@@ -13,7 +13,8 @@ import "./compose/assetsShares.spec";
 import "./invariant/zeroAddress.spec";
 import "./invariant/vault.spec";
 
-import "./common/definitions.spec";
+import "./common/isFunctionType.spec";
+import "./common/math.spec";
 import "./common/reverts.spec";
 import "./common/nonReentrant.spec";
 
@@ -27,3 +28,5 @@ use rule withdrawSatisfyIncrease;
 use rule zeroAddressUnchanged;
 use rule underlyingCannotChange;
 use rule mustNotAlwaysReverts;
+
+use rule redeemMax;

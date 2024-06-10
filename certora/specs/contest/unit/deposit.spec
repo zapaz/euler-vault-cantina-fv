@@ -81,19 +81,19 @@ rule depositSharesViolated(env e){
 rule depositMax(env e){
   require storage_totalBorrows(e) == 0;
 
-  uint256 supply = cash(e);
-  uint256 supplyCap = storage_supplyCap();
+  uint256 supply     = cash(e);
+  uint256 supplyCap  = storage_supplyCap();
+
   uint256 maxAssets1 = require_uint256(supplyCap - supply);
   uint256 maxAssets2 = assert_uint256(max_uint112 - supply);
   uint256 maxAssets3 = convertToAssets(e, assert_uint256(max_uint112 - storage_totalShares(e)));
+  uint256 maxAssets4 = isDepositDisabled(e) ? 0 : max_uint256;
+  uint256 maxAssets5 = supply >= supplyCap  ? 0 : max_uint256;
 
   uint256 maxDeposit = maxDeposit(e, _);
 
-  assert isDepositDisabled(e) => maxDeposit == 0;
-  assert supply  >= supplyCap => maxDeposit == 0;
-  assert maxDeposit <= maxAssets1;
-  assert maxDeposit <= maxAssets2;
-  assert maxDeposit <= maxAssets3;
+  assert  maxDeposit <= min5(maxAssets1, maxAssets2, maxAssets3, maxAssets4, maxAssets5);
+  // not equal, is it a bug ?
 }
 
 ///

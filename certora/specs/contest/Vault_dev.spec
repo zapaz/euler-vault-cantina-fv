@@ -15,21 +15,16 @@ import "./invariant/zeroAddress.spec";
 import "./invariant/vault.spec";
 
 import "./common/reverts.spec";
-import "./common/definitions.spec";
+import "./common/isFunctionType.spec";
+import "./common/math.spec";
 import "./common/nonReentrant.spec";
 
 methods {
     function storage_reentrancyLocked() external returns (bool)    envfree;
     function storage_hookTarget()       external returns (address) envfree;
     function storage_supplyCap()        external returns (uint256) envfree;
+    function controllerEnabled(address) external returns (bool) envfree;
 }
-
-use rule depositMax;
-use rule mintMax;
-use rule redeemMax;
-use rule withdrawMax;
-
-// use rule redeemMax;
 
 // KO
 

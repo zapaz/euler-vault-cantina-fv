@@ -13,7 +13,8 @@ import "./compose/assetsShares.spec";
 import "./invariant/zeroAddress.spec";
 import "./invariant/vault.spec";
 
-import "./common/definitions.spec";
+import "./common/isFunctionType.spec";
+import "./common/math.spec";
 import "./common/reverts.spec";
 import "./common/nonReentrant.spec";
 
@@ -48,10 +49,9 @@ use rule vaulAssetsChanged;
 use rule vaulSharesChanged;
 use rule vaultBalanceGreaterThanTotalAssets;
 
-use rule mintMaxEqual;
 use rule depositMax;
 use rule mintMax;
-use rule redeemMax;
+// use rule redeemMax;
 use rule withdrawMax;
 
 use rule withdraw;

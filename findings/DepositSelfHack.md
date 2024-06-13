@@ -93,7 +93,7 @@ This rule has counter examples only when `actualCaller == vault`, i.e. `shares >
 
 Here is a POC with a forge test, including traces and asserts:
 
-**`DepositSelfHack` POC contract - File `test/contest/DepositSelfHack.sol`:**
+**`DepositSelfHack` POC contract - File `test/Vault/DepositSelfHack.sol`:**
 <details>
 
 ```solidity
@@ -148,7 +148,7 @@ contract DepositSelfHack is SimpleVaultTest {
 ```
 </details>
 
-**`SimpleVault` Test Setup - File `test/contest/SimpleVaultTest.sol`:**
+**`SimpleVault` Test Setup - File `test/Vault/SimpleVaultTest.sol`:**
 <details>
 
 ```solidity
@@ -336,7 +336,7 @@ contract MockHook is IHookTarget {
 [⠒] Compiling...
 No files changed, compilation skipped
 
-Ran 1 test for test/contest/DepositSelfHack.t.sol:SimpleVault_DepositSelfHack
+Ran 1 test for test/Vault/DepositSelfHack.t.sol:SimpleVault_DepositSelfHack
 [PASS] test_depositSelfHack() (gas: 379373)
 Logs:
          User   Mint    1 | User   Balance : 1000000000000000000

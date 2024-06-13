@@ -11,6 +11,20 @@ uint256 constant SHARES_MASK = 0x000000000000000000000000000000000000FFFFFFFFFFF
 contract BorrowingHarness is AbstractBaseHarness, Borrowing {
     constructor(Integrations memory integrations) Borrowing(integrations) {}
 
+    function accountStatus(address account) external view returns (bool) {}
+
+    function getCurrentOwedExt(address account) external view returns (Assets) {
+        return getCurrentOwed(loadVault(), account).toAssetsUp();
+    }
+
+    function storage_reentrancyLocked() external view returns (bool) {
+        return vaultStorage.reentrancyLocked;
+    }
+
+    function storage_hookTarget() external view returns (address) {
+        return vaultStorage.hookTarget;
+    }
+
     function initOperationExternal(uint32 operation, address accountToCheck)
         public
         returns (VaultCache memory vaultCache, address account)
@@ -26,7 +40,7 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
         return TypesLib.toAssets(amount).toUint();
     }
 
-    function unpackBalanceExt(PackedUserSlot data) external view returns (Shares) {
+    function unpackBalanceExt(PackedUserSlot data) external pure returns (Shares) {
         return Shares.wrap(uint112(PackedUserSlot.unwrap(data) & SHARES_MASK));
     }
 
@@ -44,7 +58,7 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
         return vaultCache.asset;
     }
 
-    function userAssets(address user) public  returns (uint256) {
+    function userAssets(address user) public returns (uint256) {
         return IERC20(getUnderlyingAssetExt()).balanceOf(user);
     }
 }

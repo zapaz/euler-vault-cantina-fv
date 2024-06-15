@@ -14,7 +14,7 @@ use rule convertToCorrectness;
 use rule convertToSharesWeakAdditivity;
 use rule zeroDepositZeroShares;
 
-use rule onlyVaultEVC;
+use rule vaultEvcOnly;
 use rule deposit;
 use rule depositMax;
 use rule depositShares;
@@ -26,6 +26,8 @@ use rule depositMonotonicity;
 use rule vaulAssetsChanged;
 use rule vaulSharesChanged;
 use rule vaultBalanceGreaterThanTotalAssets;
+
+use rule vaultUpdate;
 
 use rule mint;
 use rule mintMax;

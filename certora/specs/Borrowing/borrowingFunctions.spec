@@ -1,5 +1,5 @@
-definition borrowingIsHarness(method f) returns bool =
-          f.selector == sig:initOperationExternal(uint32,address).selector
+definition borrowingIsHarness(method f) returns bool = baseIsHarness(f)
+      ||  f.selector == sig:initOperationExternal(uint32,address).selector
       ||  f.selector == sig:getTotalBalance().selector
       ||  f.selector == sig:toAssetsExt(uint256).selector
       ||  f.selector == sig:unpackBalanceExt(BorrowingHarness.PackedUserSlot).selector
@@ -25,8 +25,19 @@ definition borrowingIsNonReentrantView(method f) returns bool =
       ||  f.selector == sig:interestRate().selector
       ||  f.selector == sig:interestAccumulator().selector;
 
-definition borrowingUpdater(method f) returns bool =
+definition borrowingUpdateDebt(method f) returns bool =
        f.selector == sig:borrow(uint256,address).selector
     || f.selector == sig:repay(uint256,address).selector
-    || f.selector == sig:pullDebt(uint256,address).selector
-    || f.selector == sig:flashLoan(uint256,bytes).selector;
+    || f.selector == sig:pullDebt(uint256,address).selector;
+
+definition borrowingEvcUpdater(method f) returns bool = borrowingUpdateDebt(f)
+    || f.selector == sig:repayWithShares(uint256,address).selector
+    || f.selector == sig:touch().selector;
+
+definition borrowingUpdateBalance(method f) returns bool =
+       f.selector == sig:borrow(uint256,address).selector
+    || f.selector == sig:repay(uint256,address).selector;
+
+definition borrowingUpdateState(method f) returns bool = borrowingEvcUpdater(f);
+
+

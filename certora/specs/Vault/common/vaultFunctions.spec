@@ -3,24 +3,8 @@ definition isTransfer(method f) returns bool =
   ||  f.selector == sig:transferFrom(address,address,uint256).selector
   ||  f.selector == sig:transferFromMax(address,address).selector;
 
-definition vaultIsHarnessBase(method f) returns bool =
-      f.selector == sig:getLTVConfig(address).selector
-  ||  f.selector == sig:vaultCacheOracleConfigured().selector
-  ||  f.selector == sig:isAccountStatusCheckDeferredExt(address).selector
-  ||  f.selector == sig:getBalanceAndForwarderExt(address).selector
-  ||  f.selector == sig:vaultIsOnlyController(address).selector
-  ||  f.selector == sig:vaultIsController(address).selector
-  ||  f.selector == sig:getCollateralsExt(address).selector
-  ||  f.selector == sig:isCollateralEnabledExt(address, address).selector
-  ||  f.selector == sig:isOperationDisabledExt(uint32).selector
-  ||  f.selector == sig:isDepositDisabled().selector
-  ||  f.selector == sig:isMintDisabled().selector
-  ||  f.selector == sig:isWithdrawDisabled().selector
-  ||  f.selector == sig:isRedeemDisabled().selector
-  ||  f.selector == sig:isSkimDisabled().selector;
-
-definition vaultIsHarnessVault(method f) returns bool =
-          f.selector == sig:userAssets(address).selector
+definition vaultIsHarness(method f) returns bool = baseIsHarness(f)
+      ||  f.selector == sig:userAssets(address).selector
       ||  f.selector == sig:cash().selector
       ||  f.selector == sig:storage_lastInterestAccumulatorUpdate().selector
       ||  f.selector == sig:storage_cash().selector
@@ -35,8 +19,6 @@ definition vaultIsHarnessVault(method f) returns bool =
       ||  f.selector == sig:storage_interestAccumulator().selector
       ||  f.selector == sig:storage_configFlags().selector
       ||  f.selector == sig:cache_cash().selector;
-
-definition vaultIsHarness(method f) returns bool = vaultIsHarnessBase(f) || vaultIsHarnessVault(f);
 
 definition vaultIsNonReentrant(method f) returns bool =
           f.selector == sig:deposit(uint256,address).selector
@@ -85,10 +67,9 @@ definition isOnlyCalledByEVC(method f) returns bool =
       ||  f.selector == sig:withdraw(uint256,address,address).selector
       ||  f.selector == sig:redeem(uint256,address,address).selector
       ||  f.selector == sig:skim(uint256,address).selector;
-      // ||  f.selector == sig:borrow(uint256,address).selector
-      // ||  f.selector == sig:repay(uint256,address).selector
-      // ||  f.selector == sig:repayWithShares(uint256,address).selector
-      // ||  f.selector == sig:pullDebt(uint256,address).selector
-      // ||  f.selector == sig:touch().selector
-      // ||  f.selector == sig:liquidate(address,address,uint256,uint256).selector
-      // ||  f.selector == sig:convertFees().selector
+
+definition vaultUpdater(method f) returns bool = isTransfer(f) || vaultIsNonReentrant(f);
+
+definition vaultUpdateState(method f) returns bool = vaultUpdater(f) || f.selector == sig:approve(address,uint256).selector;
+
+

@@ -6,9 +6,9 @@ use rule borrowingNonReentrantViewCheck;
 
 use rule borrow;
 use rule borrowMonotonicity;
-use rule borrowingBalanceChanged;
+use rule borrowingUpdateBalance;
 use rule borrowingMustNotAlwaysReverts;
-use rule borrowingOnlyEVC;
+use rule borrowingEvcOnly;
 
 use rule repay;
 use rule repayWithShares;

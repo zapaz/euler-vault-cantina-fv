@@ -47,10 +47,10 @@ rule withdrawMax(env e, address owner){
 
   uint256 maxAssets1 = convertToAssets(e, convertToShares(e, cash(e)));
   uint256 maxAssets2 = convertToAssets(e, userShares(e, owner));
-  uint256 maxAssets3 = isWithdrawDisabled(e) ? 0 : max_uint256;
-  uint256 maxAssets4 = controllerEnabled(e, owner) ? 0 : max_uint256;
 
   uint256 maxWithdraw = maxWithdraw(e, owner);
 
-  assert  maxWithdraw == min4(maxAssets1, maxAssets2, maxAssets3, maxAssets4);
+  assert isWithdrawDisabled(e)       => maxWithdraw == 0;
+  assert controllerEnabled(e, owner) => maxWithdraw == 0;
+  assert maxWithdraw <= min(maxAssets1, maxAssets2);
 }

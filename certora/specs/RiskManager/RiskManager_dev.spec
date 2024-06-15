@@ -1,18 +1,20 @@
 import "../Borrowing.spec";
 
 import "../Common/math.spec";
+import "../Common/functions.spec";
 
-import "./riskManagerEvc.spec";
+import "./riskManagerFunctions.spec";
+import "./riskManagerUpdate.spec";
 import "./riskManagerStatus.spec";
+import "./riskManagerEvc.spec";
 
-// import "./borrowingNonReentrant.spec";
-
-// import "./borrowingEvc.spec";
+// import "./riskManagerNonReentrant.spec";
 
 methods {
-    // function storage_reentrancyLocked() external returns (bool)    envfree;
-    // function storage_hookTarget()       external returns (address) envfree;
-    // function checkAccountStatus(address,address[]) external returns (bytes4) envfree;
 }
 
 // use rule riskManagerAccountStatus;
+use rule riskManagerUpdate;
+use rule riskManagerUpdateSatisfy;
+use rule riskManagerEvcOnly;
+use rule riskManagerEvcOnlySatisfy;

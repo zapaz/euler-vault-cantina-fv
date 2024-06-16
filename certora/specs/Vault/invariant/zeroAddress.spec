@@ -1,4 +1,4 @@
-// catch mutation AssetTransfers_0
+// check balance of 0 is allways 0
 rule zeroAddressUnchanged(method f, env e, calldataarg args)  filtered {
     f -> !(f.isView || vaultIsHarness(f))
 }{

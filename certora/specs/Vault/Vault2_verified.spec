@@ -1,5 +1,7 @@
 import "./Vault.spec";
 
+// vault redeem and withdraw rules
+
 use rule redeem;
 use rule redeemMax;
 use rule redeemPreview;

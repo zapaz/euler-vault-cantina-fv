@@ -1,3 +1,4 @@
+// check only these vaultUpdateState functions update the state
 rule vaultUpdate(method f, env e, calldataarg args) filtered {
   f -> !(vaultIsHarness(f) || f.isView)
 }{
@@ -8,6 +9,7 @@ rule vaultUpdate(method f, env e, calldataarg args) filtered {
   assert storage_ != _storage => vaultUpdateState(f);
 }
 
+// guaranty that vaultUpdateState functions update the state at least once
 rule vaultUpdateSatisfy(method f, env e, calldataarg args) filtered {
   f -> vaultUpdateState(f)
 }{

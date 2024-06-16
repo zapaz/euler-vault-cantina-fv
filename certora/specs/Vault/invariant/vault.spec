@@ -1,3 +1,5 @@
+// check that is assets increase it can be only a deposit or mint
+// check that is assets decrease it can be only a withdraw or redeeem
 rule vaulAssetsChanged (method f, env e, calldataarg args, address user)  filtered {
   f -> !(f.isView || vaultIsHarness(f))
 }{
@@ -16,6 +18,8 @@ rule vaulAssetsChanged (method f, env e, calldataarg args, address user)  filter
     || f.selector == sig:redeem(uint256,address,address).selector;
 }
 
+// check that is shares increase it can be only a deposit, mint or skim
+// check that is shares decrease it can be only a withdraw or redeeem
 rule vaulSharesChanged (method f, env e, calldataarg args, address user)  filtered {
   f -> !(f.isView || vaultIsHarness(f) || isTransfer(f))
 }{
@@ -35,7 +39,8 @@ rule vaulSharesChanged (method f, env e, calldataarg args, address user)  filter
     || f.selector == sig:redeem(uint256,address,address).selector;
 }
 
-// without Borrowing no need to take into account totalBorrowed
+// check that the contract really has always more assets than reported by totalAssets function
+// without borrowing no need to take into account totalBorrowed (unless could require it)
 rule vaultBalanceGreaterThanTotalAssets(method f, env e, calldataarg args) filtered {
   f -> !(f.isView || vaultIsHarness(f) || f.selector == sig:skim(uint256,address).selector)
 }{

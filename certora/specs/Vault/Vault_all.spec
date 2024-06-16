@@ -1,5 +1,9 @@
 import "./Vault.spec";
 
+// all rules not used in verified spec
+// due to timeoute when all rules verified together
+// rules split in 5 files
+
 // slow
 // use invariant assetsMoreThanSupply;
 // use invariant noAssetsIfNoSupply;

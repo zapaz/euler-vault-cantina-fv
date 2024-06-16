@@ -1,5 +1,7 @@
 import "./Vault.spec";
 
+// vault deposit and mint rules
+
 use rule deposit;
 use rule depositMax;
 use rule depositShares;

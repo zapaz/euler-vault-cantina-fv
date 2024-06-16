@@ -1,3 +1,5 @@
+// check only EVC can call functions than update the vault
+// i.e. vaultUpdater functions
 rule vaultEvcOnly (method f, env e, calldataarg args) filtered {
   f -> vaultUpdater(f)
 }{
@@ -6,6 +8,7 @@ rule vaultEvcOnly (method f, env e, calldataarg args) filtered {
   assert e.msg.sender == evc;
 }
 
+// check other functions (not vaultUpdater ones) can be called by other sender thant the EVC
 rule vaultEvcOnlySatisfy (method f, env e, calldataarg args) filtered {
   f -> !(vaultUpdater(f) || vaultIsHarness(f))
 }{

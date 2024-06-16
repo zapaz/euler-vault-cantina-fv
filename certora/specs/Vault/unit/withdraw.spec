@@ -1,3 +1,6 @@
+// on withdraw
+// - vault balance decrease by withdrawn amount
+// - receiver balance increase by withdrawn amount
 rule withdrawBalance(env e, uint256 amount, address receiver, address user){
   mathint _balance = userAssets(e, user);
   mathint shares = withdraw(e, amount, receiver, _);
@@ -7,6 +10,7 @@ rule withdrawBalance(env e, uint256 amount, address receiver, address user){
   assert balance_ > _balance => (user == receiver) && (balance_ == _balance + amount);
 }
 
+// more withdraw amount requested gives more shares
 rule withdrawMonotonicity(env e, uint256 amount, uint256 more){
   storage initialStorage = lastStorage;
   mathint _shares = withdraw(e, amount, _, _);
@@ -16,14 +20,16 @@ rule withdrawMonotonicity(env e, uint256 amount, uint256 more){
   assert shares_ >= _shares;
 }
 
+// withdraw amount is as expected convertToShares
 rule withdrawFromAssets(env e, uint256 amount){
   assert withdraw(e, amount, _, _) >= convertToShares(e, amount);
 }
-
+// withdraw amount is as expected withdrawPreview
 rule withdrawPreview(env e, uint256 amount){
   assert previewWithdraw(e, amount) == withdraw(e, amount, _, _);
 }
 
+// strictly positive withdraw is possible, with owner assets increase
 rule withdrawSatisfyIncrease(env e, uint256 amount, address receiver, address owner){
   mathint _balance = userAssets(e, owner);
   mathint shares   = withdraw(e, amount, receiver, owner);
@@ -33,6 +39,7 @@ rule withdrawSatisfyIncrease(env e, uint256 amount, address receiver, address ow
   satisfy shares > 0;
 }
 
+// strictly positive withdraw is possible, with vault assets decrease
 rule withdrawSatisfyDecrease(env e, calldataarg args, address user){
   mathint _balance = userAssets(e, currentContract);
   mathint shares   = withdraw(e, args);
@@ -42,6 +49,8 @@ rule withdrawSatisfyDecrease(env e, calldataarg args, address user){
   satisfy shares > 0;
 }
 
+// withdrawMax is less than these 2 max values
+// and equal to 0 if withdraw is disabled or controller enabled
 rule withdrawMax(env e, address owner){
   require storage_totalBorrows(e) == 0;
 

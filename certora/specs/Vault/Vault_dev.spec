@@ -1,7 +1,8 @@
 import "./Vault.spec";
 
-// use rule redeemMonotonicity;
+// not ok rules, not in the verified spec
 
+// use rule redeemMonotonicity;
 
 // TIMEOUT
 // use rule withdrawFromAssets;

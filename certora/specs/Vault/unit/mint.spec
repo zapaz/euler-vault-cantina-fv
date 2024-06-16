@@ -1,3 +1,8 @@
+///
+// On mint:
+// - only vault can increase it's assets balance, by minted amount
+// - only actualCaller can decrease it's assets balance, by minted amount
+///
 rule mint(env e, uint256 amount, address user){
   address caller = actualCaller(e);
 
@@ -9,10 +14,12 @@ rule mint(env e, uint256 amount, address user){
   assert userAssets_ > _userAssets => (user == currentContract) && (userAssets_ == _userAssets + assets);
 }
 
+// mint asset is equal to mintPreview result
 rule mintPreview(env e, uint256 amount){
   assert previewMint(e, amount) == mint(e, amount, _);
 }
 
+// more minted amount gives more assets
 rule mintMonotonicity(env e, uint256 amount, uint256 more){
   storage initialStorage = lastStorage;
   uint256 _assets = mint(e, amount, _);
@@ -22,14 +29,14 @@ rule mintMonotonicity(env e, uint256 amount, uint256 more){
   assert assets_ >= _assets;
 }
 
-
+// mint is possible
 rule mintSatisfy(env e){
   mathint assets = mint(e, _, _);
 
   satisfy assets > 0;
 }
 
-
+// maxMint is equal to expected min of these 5 values
 rule mintMax(env e){
   require storage_totalBorrows(e) == 0;
 

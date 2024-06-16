@@ -20,10 +20,12 @@ rule deposit(env e, uint256 amount, address user){
   assert userAssets_ < _userAssets => (user == caller)          && (userAssets_ == _userAssets - deposit);
 }
 
+// check shares returned on deposit are equal to previewDesposit result
 rule depositPreview(env e, uint256 amount){
   assert previewDeposit(e, amount) == deposit(e, amount, _);
 }
 
+// check more deposit return more shares
 rule depositMonotonicity(env e, uint256 amount, uint256 more){
   storage initialStorage = lastStorage;
   uint256 _shares = deposit(e, amount, _);
@@ -37,7 +39,6 @@ rule depositMonotonicity(env e, uint256 amount, uint256 more){
 ///
 // Assuming actual caller is not the vault (caller != currentContract)
 // on deposit:
-// - shares returned are equal to previewDesposit result
 // - shares returned are equal to convertToShares of amount
 // - some shares are returned if and only if amount is strictly positive
 // - caller assets balance decrease by amount
@@ -66,9 +67,9 @@ rule depositShares(env e, uint256 amount, address receiver){
 ///
 // shares sould be returned if and only if caller balance decrease
 ///
-// rule fails: that is a weakness for a Kit
+// rule violated:
 //  - fails when caller is vault
-//  - POC available => `test/Vault/DepositSelfHack.t.sol`
+//  - POC available => `test/contest/DepositSelfHack.t.sol`
 //  - report => `findings/DepositSelfHack.md`
 ///
 rule depositSharesViolated(env e){
@@ -81,6 +82,7 @@ rule depositSharesViolated(env e){
   assert shares > 0 <=> callerAssets_ < _callerAssets;
 }
 
+// ensure depositMax is less than expected
 rule depositMax(env e){
   require storage_totalBorrows(e) == 0;
 
@@ -96,11 +98,10 @@ rule depositMax(env e){
   uint256 maxDeposit = maxDeposit(e, _);
 
   assert  maxDeposit <= min5(maxAssets1, maxAssets2, maxAssets3, maxAssets4, maxAssets5);
-  // not equal, is it a bug ?
 }
 
 ///
-// shares can be returned
+// ensure shares can be returned
 ///
 rule depositSatisfy(env e){
   mathint shares = deposit(e, _, _);

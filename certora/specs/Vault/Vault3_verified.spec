@@ -1,5 +1,7 @@
 import "./Vault.spec";
 
+// vault generic rules
+
 use rule vaultNonReentrantCheck;
 use rule vaultNonReentrantViewCheck;
 use rule vaultMustNotAlwaysReverts;

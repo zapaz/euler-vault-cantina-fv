@@ -1,4 +1,5 @@
 
+// check deposit and immediate withdraw returns the same amount
 rule depositWithdraw(env e, uint256 amount, address user){
   address caller = actualCaller(e);
 

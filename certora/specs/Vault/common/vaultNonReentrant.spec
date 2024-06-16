@@ -1,3 +1,4 @@
+// check that these vault write functions are non-reentrant
 rule vaultNonReentrantCheck(method f, env e, calldataarg args) filtered {f -> vaultIsNonReentrant(f)} {
     require storage_reentrancyLocked() == true;
 
@@ -6,6 +7,7 @@ rule vaultNonReentrantCheck(method f, env e, calldataarg args) filtered {f -> va
     assert lastReverted;
 }
 
+// check that these vault view functions are non-reentrant
 rule vaultNonReentrantViewCheck(method f, env e, calldataarg args) filtered {f -> vaultIsNonReentrantView(f)} {
     require storage_reentrancyLocked() == true;
 
@@ -13,10 +15,9 @@ rule vaultNonReentrantViewCheck(method f, env e, calldataarg args) filtered {f -
 
     assert !lastReverted  => e.msg.sender == storage_hookTarget()
                           || e.msg.sender == currentContract;
-                      // <=> e.msg.sender == storage_hookTarget()
-                      //  || (storage_hookTarget() == ProxyUtils.useViewCaller() && e.msg.sender == currentContract);
 }
 
+// check the vault locked state is never locked (unless during a tx)
 invariant vaultReentrantLockInvariant(env e)
     storage_reentrancyLocked() == false;
 

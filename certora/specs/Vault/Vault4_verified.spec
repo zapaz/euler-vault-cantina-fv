@@ -1,5 +1,7 @@
 import "./Vault.spec";
 
+// vault skim rules and more generic rules
+
 use invariant vaultReentrantLockInvariant;
 
 use rule vaultUpdate;

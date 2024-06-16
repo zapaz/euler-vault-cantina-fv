@@ -1,5 +1,7 @@
 import "./Vault.spec";
 
+// original certora rules
+
 use rule conversionOfZero;
 use rule conversionWeakIntegrity;
 use rule conversionWeakMonotonicity;

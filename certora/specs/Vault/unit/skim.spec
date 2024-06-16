@@ -1,3 +1,4 @@
+// verify multiple properties after skim
 // skim should only take surplus
 // cash after skim must be strictly equal to cash before + amount transfered
 rule skim(env e, uint256 amount, address receiver){
@@ -30,6 +31,7 @@ rule skim(env e, uint256 amount, address receiver){
   assert receiverShares_ == _receiverShares + shares;
 }
 
+// more skimmed amount gives more shares
 rule skimMonotonicity(env e, uint256 amount, uint256 more){
   storage initialStorage = lastStorage;
   mathint _shares = skim(e, amount, _);
@@ -40,7 +42,8 @@ rule skimMonotonicity(env e, uint256 amount, uint256 more){
 }
 
 
-// with no borrow
+// vault assets should always be greater than return of toalAssets function
+// (with no borrow)
 rule skimSupply(env e) {
   require actualCaller(e) != currentContract;
   require storage_totalBorrows(e) == 0;
@@ -105,6 +108,7 @@ rule skimWithdrawUnchanged(env e, uint256 amount, address user){
 }
 
 // KO
+// following rules not ok
 
 // catch mutation Vault_0 ?
 // with no transfer balance sould not move

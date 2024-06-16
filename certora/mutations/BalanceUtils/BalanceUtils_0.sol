@@ -75,7 +75,8 @@ abstract contract BalanceUtils is Base {
             UserStorage storage user = vaultStorage.users[from];
 
             (Shares origFromBalance, bool fromBalanceForwarderEnabled) = user.getBalanceAndBalanceForwarder();
-            if (origFromBalance < amount) revert E_InsufficientBalance();
+
+            // mutation   if (origFromBalance < amount) revert E_InsufficientBalance();
 
             Shares newFromBalance = origFromBalance.subUnchecked(amount);
             user.setBalance(newFromBalance);

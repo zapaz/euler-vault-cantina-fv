@@ -29,6 +29,7 @@ methods {
 
     function storage_lastInterestAccumulatorUpdate() external returns (uint48) envfree;
     function storage_cash() external returns (VaultHarness.Assets) envfree;
+    function cash() external returns (uint256) envfree;
     function storage_supplyCap() external returns (uint256) envfree;
     function storage_borrowCap() external returns (uint256) envfree;
     function storage_hookedOps() external returns (VaultHarness.Flags) envfree;
@@ -63,7 +64,7 @@ function LTVConfigAssumptions(env e, VaultHarness.LTVConfig ltvConfig) returns b
     mathint timeRemaining = ltvConfig.targetTimestamp - e.block.timestamp;
     return LTVLessOne &&
         initialLTVLessOne &&
-        target_less_original && 
+        target_less_original &&
         require_uint32(timeRemaining) < ltvConfig.rampDuration;
 }
 
@@ -146,7 +147,7 @@ rule convertToCorrectness(uint256 amount, uint256 shares)
 rule zeroDepositZeroShares(uint assets, address receiver)
 {
     env e;
-    
+
     uint shares = deposit(e,assets, receiver);
     // In this Vault, max_uint256 as an argument will transfer all assets
     // to the vault . This precondition rules out the case where
@@ -186,7 +187,7 @@ invariant noSupplyIfNoAssets(env e)
     }
 
 
-invariant noAssetsIfNoSupply(env e) 
+invariant noAssetsIfNoSupply(env e)
     ( totalAssets(e) == 0 => ( totalSupply(e) == 0 ))
 
     {
@@ -240,7 +241,7 @@ rule underlyingCannotChange() {
 rule dustFavorsTheHouse(uint assetsIn )
 {
     env e;
-        
+
     require e.msg.sender != currentContract;
     safeAssumptions(e,e.msg.sender,e.msg.sender);
     uint256 totalSupplyBefore = totalSupply(e);
@@ -269,16 +270,16 @@ invariant vaultSolvency(env e)
             require e.msg.sender != currentContract;
             require actualCaller(e) != currentContract;
             require actualCallerCheckController(e) != currentContract;
-            require currentContract != asset(); 
+            require currentContract != asset();
         }
     }
 
 
-rule redeemingAllValidity() { 
+rule redeemingAllValidity() {
     env e;
-    address owner; 
+    address owner;
     uint256 shares; require shares == balanceOf(e, owner);
-    
+
     safeAssumptions(e, _, owner);
     redeem(e, shares, _, owner);
     uint256 ownerBalanceAfter = balanceOf(e, owner);
@@ -323,7 +324,7 @@ filtered {
 ////                        # helpers and miscellaneous                //////////
 ////////////////////////////////////////////////////////////////////////////////
 
-definition noSupplyIfNoAssetsDef(env e) returns bool = 
+definition noSupplyIfNoAssetsDef(env e) returns bool =
     // for this ERC4626 implementation balanceOf(Vault) is not the same as total assets
     // ( userAssets(e, currentContract) == 0 => totalSupply(e) == 0 ) &&
     ( totalAssets(e) == 0 => ( totalSupply(e) == 0 ));
@@ -335,17 +336,17 @@ function safeAssumptions(env e, address receiver, address owner) {
     requireInvariant vaultSolvency(e);
     requireInvariant noAssetsIfNoSupply(e);
     requireInvariant noSupplyIfNoAssets(e);
-    requireInvariant assetsMoreThanSupply(e); 
+    requireInvariant assetsMoreThanSupply(e);
 
-    require ( 
-        (receiver != owner 
+    require (
+        (receiver != owner
             =>  balanceOf(e, owner) + balanceOf(e, receiver) <= to_mathint(totalSupply(e)))
                 && balanceOf(e, receiver) <= totalSupply(e)
                 && balanceOf(e, owner) <= totalSupply(e));
 }
 
 
-// A helper function to set the receiver 
+// A helper function to set the receiver
 function callReceiverFunctions(method f, env e, address receiver) {
     uint256 amount;
     if (f.selector == sig:deposit(uint256,address).selector) {
@@ -391,7 +392,7 @@ function callFunctionsWithReceiverAndOwner(env e, method f, uint256 assets, uint
     }
     if (f.selector == sig:redeem(uint256,address,address).selector) {
         redeem(e, shares, receiver, owner);
-    } 
+    }
     if (f.selector == sig:deposit(uint256,address).selector) {
         deposit(e, assets, receiver);
     }

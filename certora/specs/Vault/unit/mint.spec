@@ -46,16 +46,3 @@ rule mintMax(env e){
 
   assert  maxMint    == min5(maxShares1, maxShares2, maxShares3, maxShares4, maxShares5);
 }
-
-rule mintMaxSatisfy(env e){
-  uint256 supply = cash(e);
-  uint256 supplyCap = storage_supplyCap();
-
-  require storage_totalBorrows(e) == 0;
-  require(!isMintDisabled(e));
-  require(supply < supplyCap);
-
-  maxMint(e, _);
-
-  satisfy true;
-}

@@ -5,10 +5,9 @@ import "../Common/functions.spec";
 
 import "./governanceFunctions.spec";
 import "./governanceUpdate.spec";
-// import "./governanceGovernor.spec";
-// import "./governanceReverts.spec";
-// import "./governanceNonReentrant.spec";
+import "./governanceGovernor.spec";
 
-// use rule governanceGovernorOnly;
+use rule governanceGovernorOnly;
+use rule governanceGovernorOnlySatisfy;
 use rule governanceUpdate;
 use rule governanceUpdateSatisfy;

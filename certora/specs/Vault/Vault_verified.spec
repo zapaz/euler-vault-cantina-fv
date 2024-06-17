@@ -17,3 +17,5 @@ use rule underlyingCannotChange;
 
 use invariant totalSupplyIsSumOfBalances;
 // use invariant noAssetsIfNoSupply;
+
+use rule skimMonotonicity;

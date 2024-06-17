@@ -13,6 +13,5 @@ use rule skim;
 use rule skimSupply;
 use rule skimSatisfy;
 use rule skimIdemDeposit;
-use rule skimMonotonicity;
 use rule skimWithdrawUnchanged;
 

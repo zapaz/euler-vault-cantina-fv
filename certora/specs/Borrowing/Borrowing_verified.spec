@@ -8,11 +8,12 @@ use rule borrowingNonReentrantViewCheck;
 
 use rule borrow;
 use rule borrowingUpdate;
-use rule borrowingUpdateSatisfy;
 use rule borrowingEvcOnly;
-use rule borrowingEvcOnlySatisfy;
+use rule borrowingBalances;
 use rule borrowMonotonicity;
+use rule borrowingUpdateSatisfy;
 use rule borrowingUpdateBalance;
+use rule borrowingEvcOnlySatisfy;
 use rule borrowingUpdateBalanceSatisfy;
 use rule borrowingMustNotAlwaysReverts;
 

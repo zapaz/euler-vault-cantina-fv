@@ -1,3 +1,4 @@
+// check only governanceUpdateState functions can modify state
 rule governanceUpdate(method f, env e, calldataarg args) filtered {
   f -> !(governanceIsHarness(f) || f.isView)
 }{
@@ -8,6 +9,7 @@ rule governanceUpdate(method f, env e, calldataarg args) filtered {
   assert storage_ != _storage => governanceUpdateState(f);
 }
 
+// check governanceUpdateState functions can modify state at least once
 rule governanceUpdateSatisfy(method f, env e, calldataarg args) filtered {
   f -> governanceUpdateState(f)
 }{

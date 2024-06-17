@@ -1,3 +1,4 @@
+// check only liquidationUpdateState functions can modify state
 rule liquidationUpdate(method f, env e, calldataarg args) filtered {
   f -> !(liquidationIsHarness(f) || f.isView)
 }{
@@ -8,7 +9,7 @@ rule liquidationUpdate(method f, env e, calldataarg args) filtered {
   assert storage_ != _storage => liquidationUpdateState(f);
 }
 
-
+// check liquidationUpdateState functions can modify state at least once
 rule liquidationUpdateSatisfy(method f, env e, calldataarg args) filtered {
   f -> liquidationUpdateState(f)
 }{

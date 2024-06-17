@@ -1,3 +1,5 @@
+// generic import and rule for Governance
+
 import "../Governance.spec";
 
 import "../Common/math.spec";

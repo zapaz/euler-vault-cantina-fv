@@ -1,3 +1,4 @@
+// check user balance is only modified by borrowingUpdateBalance functions
 rule borrowingUpdateBalance(method f, env e, calldataarg args, address user) filtered {
   f -> !(f.isView || borrowingIsHarness(f))
 }{
@@ -8,6 +9,7 @@ rule borrowingUpdateBalance(method f, env e, calldataarg args, address user) fil
   assert balanceUser_ != _balanceUser => borrowingUpdateBalance(f);
 }
 
+// check all borrowingUpdateBalance functions can modify user balance at least once
 rule borrowingUpdateBalanceSatisfy(method f, env e, calldataarg args, address user) filtered {
   f -> borrowingUpdateBalance(f)
 }{

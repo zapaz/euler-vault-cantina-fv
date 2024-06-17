@@ -1,3 +1,4 @@
+// identify functions of the BaseHarness
 definition baseIsHarness(method f) returns bool =
           f.selector == sig:isDepositDisabled().selector
       ||  f.selector == sig:isMintDisabled().selector

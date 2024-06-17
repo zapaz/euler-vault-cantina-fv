@@ -1,3 +1,5 @@
+// Borrowing verified rules
+
 import "./Borrowing_.spec";
 
 use invariant borrowingReentrantLockInvariant;

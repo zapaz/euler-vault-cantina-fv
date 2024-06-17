@@ -1,3 +1,5 @@
+// generic import and methods uses by all Borrowing rules
+
 import "../Borrowing.spec";
 
 import "../Common/math.spec";

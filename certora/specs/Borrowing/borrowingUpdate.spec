@@ -1,3 +1,4 @@
+// check only borrowingUpdateState functions can modify state
 rule borrowingUpdate(method f, env e, calldataarg args) filtered {
   f -> !(borrowingIsHarness(f) || f.isView)
 }{
@@ -8,6 +9,7 @@ rule borrowingUpdate(method f, env e, calldataarg args) filtered {
   assert storage_ != _storage => borrowingUpdateState(f);
 }
 
+// check borrowingUpdateState functions can at least modify state once
 rule borrowingUpdateSatisfy(method f, env e, calldataarg args) filtered {
   f -> borrowingUpdateState(f)
 }{

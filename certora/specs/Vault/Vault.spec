@@ -1,4 +1,4 @@
-// generic import and methods uses by all vault rules
+// generic import and methods uses by all Vault rules
 // including original vaultFull rules and definitions by certora
 
 // NOTE: all these rules are made on a contract without Borrowing

@@ -16,5 +16,4 @@ use rule redeemingAllValidity;
 use rule reclaimingProducesAssets;
 
 use invariant totalSupplyIsSumOfBalances;
-
-
+use invariant noAssetsIfNoSupply;

@@ -1,6 +1,8 @@
+// not ok rules, not in the verified spec
+
 import "./Vault.spec";
 
-// not ok rules, not in the verified spec
+use invariant vaultSolvency;
 
 // use rule redeemMonotonicity;
 

@@ -1,3 +1,4 @@
+// basic min/max functions for uint256
 definition max(uint256 a, uint256 b) returns uint256 = ((a > b) ? a : b);
 definition min(uint256 a, uint256 b) returns uint256 = ((a < b) ? a : b);
 definition min3(uint256 a, uint256 b, uint256 c) returns uint256 = ((a < b) ? min(a, c) : min(a, b));

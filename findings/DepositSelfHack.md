@@ -1,5 +1,7 @@
 # EVK Vault module can Deposit to itself allowing to Drain all Assets
 
+> link to cantina issue => https://cantina.xyz/code/41306bb9-2bb8-4da6-95c3-66b85e11639f/findings/38
+
 ## Relevant Context
 A seemingly harmless SimpleVault inheriting from the EVK can drain all the Assets of the Vault.
 
@@ -47,7 +49,7 @@ contract SimpleVault is ISimpleVaultBase, EVault {
 ```
 </details>
 
-The hack here is to call `this.deposit` and `this.withdraw` instead of `deposit` and `withdraw` to enable the Vault to be the actual caller. So depositing into itself, implying it's own balance unchanged (due to a trasfer of Assets to itsef, sort of `transfer(from, to)` with `to == from`)
+The hack here is to call `this.deposit` and `this.withdraw` instead of `deposit` and `withdraw` to enable the Vault to be the actual caller. So depositing into itself, implying it's own balance unchanged (due to a transfer of Assets to itsef, sort of `transfer(from, to)` with `to == from`)
 
 So anyone can call `stake` with `totalAssets()` amount, and then call `unstake` with the same amount, draining all the Assets of the Vault in 2 transactions.
 
@@ -65,7 +67,7 @@ The likelihood is high, as the code is public and the exploit is easy to underst
 
 The only hurdle is to promote this malicious Vault, without audits (saying "it's only 2 lines of code added..."), to attract users and encourange them to deposit funds in it.
 
-Impact is that all sort of Vault like `SimpleVault` derivated from the EVK can drain all the Assets in 2 transactions.
+Impact is that all sort of Vault like `SimpleVault` derivated from the EVK can drain all the assets in 2 transactions.
 
 
 ## Proof of Concept
@@ -93,7 +95,7 @@ This rule has counter examples only when `actualCaller == vault`, i.e. `shares >
 
 Here is a POC with a forge test, including traces and asserts:
 
-**`DepositSelfHack` POC contract - File `test/Vault/DepositSelfHack.sol`:**
+**`DepositSelfHack` POC contract - File `test/contest/DepositSelfHack.sol`:**
 <details>
 
 ```solidity
@@ -148,7 +150,7 @@ contract DepositSelfHack is SimpleVaultTest {
 ```
 </details>
 
-**`SimpleVault` Test Setup - File `test/Vault/SimpleVaultTest.sol`:**
+**`SimpleVault` Test Setup - File `test/contest/SimpleVaultTest.sol`:**
 <details>
 
 ```solidity
@@ -336,7 +338,7 @@ contract MockHook is IHookTarget {
 [⠒] Compiling...
 No files changed, compilation skipped
 
-Ran 1 test for test/Vault/DepositSelfHack.t.sol:SimpleVault_DepositSelfHack
+Ran 1 test for test/contest/DepositSelfHack.t.sol:SimpleVault_DepositSelfHack
 [PASS] test_depositSelfHack() (gas: 379373)
 Logs:
          User   Mint    1 | User   Balance : 1000000000000000000

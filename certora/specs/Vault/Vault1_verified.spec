@@ -14,4 +14,4 @@ use rule mint;
 use rule mintMax;
 use rule mintPreview;
 use rule mintSatisfy;
-
+use rule mintMonotonicity;

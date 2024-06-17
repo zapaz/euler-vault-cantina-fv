@@ -40,7 +40,7 @@ rule vaulSharesChanged (method f, env e, calldataarg args, address user)  filter
 }
 
 // check that the contract really has always more assets than reported by totalAssets function
-// without borrowing no need to take into account totalBorrowed (unless could require it)
+// without borrowing no need to take into account totalBorrowed
 rule vaultBalanceGreaterThanTotalAssets(method f, env e, calldataarg args) filtered {
   f -> !(f.isView || vaultIsHarness(f) || f.selector == sig:skim(uint256,address).selector)
 }{

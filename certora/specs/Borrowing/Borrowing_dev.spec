@@ -2,9 +2,8 @@
 
 import "./Borrowing_.spec";
 
-use rule governanceGovernorOnly;
-use rule governanceGovernorOnlySatisfy;
-
-// use rule borrow2;
-// use rule repay2;
-
+use rule borrowingBalances;
+use rule borrowingBalancesEqual;
+use rule borrowingBalances4;
+use rule borrowingBalances5;
+use rule borrowingBalances6;

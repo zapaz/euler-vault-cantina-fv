@@ -13,6 +13,11 @@ contract BorrowingHarness is AbstractBaseHarness, Borrowing {
 
     function accountStatus(address account) external view returns (bool) {}
 
+    function totalAssets() public view virtual nonReentrantView returns (uint256) {
+        VaultCache memory vaultCache = loadVault();
+        return totalAssetsInternal(vaultCache);
+    }
+
     function getCurrentOwedExt(address account) external view returns (Assets) {
         return getCurrentOwed(loadVault(), account).toAssetsUp();
     }
